@@ -13,7 +13,7 @@ class Milicart extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: Products(),
       child: MaterialApp(
-          title: 'Milicart',
+          title: 'MiliCart',
           theme: ThemeData(
             primarySwatch: Colors.purple,
             accentColor: Colors.deepOrange,

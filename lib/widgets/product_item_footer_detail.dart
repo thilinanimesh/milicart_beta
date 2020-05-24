@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
 
-
 class ProductItemFooterDetail extends StatelessWidget {
   const ProductItemFooterDetail({
     Key key,
@@ -17,15 +16,18 @@ class ProductItemFooterDetail extends StatelessWidget {
     return GridTileBar(
       backgroundColor: Colors.black87,
       leading: Consumer<Product>(
-        builder: (ctx, product, child) => IconButton(
-              icon: Icon(
-                product.isFavorite ? Icons.favorite : Icons.favorite_border,
-              ),
-              color: Theme.of(context).accentColor,
-              onPressed: () {
-                product.toggleFavoriteStatus();
-              },
-            ),
+        builder: (ctx, product, _) => IconButton(
+          // We can add a child ( Where now it has a '_') here to make it a
+          //complex object where child will not be rebuild
+          //even if the this method is asked to rebuild from the provider method.
+          icon: Icon(
+            product.isFavorite ? Icons.favorite : Icons.favorite_border,
+          ),
+          color: Theme.of(context).accentColor,
+          onPressed: () {
+            product.toggleFavoriteStatus();
+          },
+        ),
       ),
       title: Text(
         product.title,
