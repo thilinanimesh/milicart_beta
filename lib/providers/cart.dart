@@ -16,7 +16,7 @@ class Cart with ChangeNotifier {
   ) {
     if (_items.containsKey(productId)) {
       //chnage quantity...
-      _items.update(
+      _items.update( 
         productId,
         (existingCardItem) => CardItem(
           id: existingCardItem.id,
