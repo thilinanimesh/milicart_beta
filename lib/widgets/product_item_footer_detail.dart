@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
+import "../providers/cart.dart";
 
 class ProductItemFooterDetail extends StatelessWidget {
   const ProductItemFooterDetail({
     Key key,
     @required this.product,
+    @required this.cart,
   }) : super(key: key);
 
   final Product product;
+  final Cart cart;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,13 @@ class ProductItemFooterDetail extends StatelessWidget {
         icon: Icon(
           Icons.shopping_cart,
         ),
-        onPressed: () {},
+        onPressed: () {
+          cart.addItem(
+            product.id,
+            product.price,
+            product.title,
+          );
+        },
         color: Theme.of(context).accentColor,
       ),
     );
