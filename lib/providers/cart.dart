@@ -3,10 +3,14 @@ import 'package:flutter/foundation.dart';
 import './cart_item.dart';
 
 class Cart with ChangeNotifier {
-  Map<String, CardItem> _items;
+  Map<String, CardItem> _items = {};
 
   Map<String, CardItem> get items {
     return {..._items};
+  }
+
+  int get itemCount {
+    return _items.length;
   }
 
   void addItem(
@@ -16,7 +20,7 @@ class Cart with ChangeNotifier {
   ) {
     if (_items.containsKey(productId)) {
       //chnage quantity...
-      _items.update( 
+      _items.update(
         productId,
         (existingCardItem) => CardItem(
           id: existingCardItem.id,
@@ -36,5 +40,6 @@ class Cart with ChangeNotifier {
         ),
       );
     }
+    notifyListeners();
   }
 }
