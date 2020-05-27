@@ -1,3 +1,4 @@
+import 'package:MiliCart/widgets/cart_item.dart';
 import 'package:flutter/foundation.dart';
 
 import './cart_item.dart';
@@ -13,10 +14,10 @@ class Cart with ChangeNotifier {
     return _items.length;
   }
 
-  double get totalAmount{
-    var total =0.0;
-    _items.forEach((key, cartItem) { 
-       total += cartItem.price * cartItem.quantity; 
+  double get totalAmount {
+    var total = 0.0;
+    _items.forEach((key, cartItem) {
+      total += cartItem.price * cartItem.quantity;
     });
     return total;
   }
@@ -49,5 +50,27 @@ class Cart with ChangeNotifier {
       );
     }
     notifyListeners();
+  }
+
+  void removeItemQuantity(String productId) {
+    if (_items.containsKey(productId)) {
+      _items.update(
+        productId,
+        (existingCardItem) => CardItem(
+          id: existingCardItem.id,
+          title: existingCardItem.title,
+          price: existingCardItem.price,
+          quantity: existingCardItem.quantity - 1,
+        ),
+      );
+      notifyListeners();
+    }
+  }
+
+  void removeItem(String productId){
+    if(_items.containsKey(productId)){
+      _items.remove(productId);
+      notifyListeners();
+    }
   }
 }
