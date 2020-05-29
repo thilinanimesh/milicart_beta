@@ -10,6 +10,9 @@ import './providers/cart.dart';
 void main() => runApp(Milicart());
 
 class Milicart extends StatelessWidget {
+
+  static const primaryColor = const Color(0xff3ec2a6);
+  static const secondaryColor = const Color(0xff7ad5c2);
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -24,8 +27,8 @@ class Milicart extends StatelessWidget {
       child: MaterialApp(
         title: 'MiliCart',
         theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.deepOrange,
+          primaryColor: primaryColor,
+          accentColor: secondaryColor,
           fontFamily: 'Lato',
         ),
         home: ProductsOverviewScreen(),

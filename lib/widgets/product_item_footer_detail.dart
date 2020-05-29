@@ -17,7 +17,7 @@ class ProductItemFooterDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridTileBar(
-      backgroundColor: Colors.black87,
+      backgroundColor: (Theme.of(context).primaryColor).withOpacity(0.7),
       leading: Consumer<Product>(
         builder: (ctx, product, _) => IconButton(
           // We can add a child ( Where now it has a '_') here to make it a
