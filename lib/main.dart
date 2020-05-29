@@ -6,11 +6,11 @@ import './screens/product_detail_screen.dart';
 import './screens/cart_screen.dart';
 import './providers/products.dart';
 import './providers/cart.dart';
+import './providers/orders.dart';
 
 void main() => runApp(Milicart());
 
 class Milicart extends StatelessWidget {
-
   static const primaryColor = const Color(0xff3ec2a6);
   static const secondaryColor = const Color(0xff7ad5c2);
   @override
@@ -22,6 +22,9 @@ class Milicart extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => Orders(),
         ),
       ],
       child: MaterialApp(

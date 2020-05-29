@@ -1,12 +1,11 @@
-import 'package:MiliCart/widgets/cart_item.dart';
 import 'package:flutter/foundation.dart';
 
-import './cart_item.dart';
+import './cart_item.dart' as po;
 
 class Cart with ChangeNotifier {
-  Map<String, CardItem> _items = {};
+  Map<String, po.CartItem> _items = {};
 
-  Map<String, CardItem> get items {
+  Map<String, po.CartItem> get items {
     return {..._items};
   }
 
@@ -31,7 +30,7 @@ class Cart with ChangeNotifier {
       //chnage quantity...
       _items.update(
         productId,
-        (existingCardItem) => CardItem(
+        (existingCardItem) => po.CartItem(
           id: existingCardItem.id,
           title: existingCardItem.title,
           price: existingCardItem.price,
@@ -41,7 +40,7 @@ class Cart with ChangeNotifier {
     } else {
       _items.putIfAbsent(
         productId,
-        () => CardItem(
+        () => po.CartItem(
           id: DateTime.now().toString(),
           title: title,
           price: price,
@@ -56,7 +55,7 @@ class Cart with ChangeNotifier {
     if (_items.containsKey(productId)) {
       _items.update(
         productId,
-        (existingCardItem) => CardItem(
+        (existingCardItem) => po.CartItem(
           id: existingCardItem.id,
           title: existingCardItem.title,
           price: existingCardItem.price,
@@ -72,5 +71,10 @@ class Cart with ChangeNotifier {
       _items.remove(productId);
       notifyListeners();
     }
+  }
+
+  void clearCart(){
+    _items = {};
+    notifyListeners();
   }
 }
