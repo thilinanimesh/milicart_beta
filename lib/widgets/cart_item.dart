@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import './circle_image.dart';
-import '../providers/cart.dart';
+import '../providers/cart.dart'as po;
 
 class CartItem extends StatelessWidget {
   final String productId;
@@ -55,6 +55,28 @@ class CartItem extends StatelessWidget {
       ),
       direction:
           DismissDirection.endToStart, // this will block the swap left for now.
+      confirmDismiss: (direction){
+        return showDialog(context: context,
+        builder: (ctx)=>AlertDialog(
+          title: Text('Are you shure?'),
+          content: Text('Do you want to remove ${title} from the cart?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('NO'),
+              onPressed: (){
+                Navigator.of(ctx).pop(false);
+              },
+            ),
+            FlatButton(
+              child: Text('YES'),
+              onPressed: (){
+                Navigator.of(ctx).pop(true);
+              },
+            ),
+          ],
+        ),
+        );
+      },
       onDismissed: (direction) {
         if (direction == DismissDirection.startToEnd) {
           //this need to be implimented later stage, not working as expected, widget tree isn't updating
@@ -63,7 +85,7 @@ class CartItem extends StatelessWidget {
           //print('Deleting product qty');
         } else {
           //print('Deleting the whole product');
-          Provider.of<Cart>(context, listen: false).removeItem(productId);
+          Provider.of<po.Cart>(context, listen: false).removeItem(productId);
         }
       },
       child: Card(

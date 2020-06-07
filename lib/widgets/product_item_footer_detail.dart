@@ -46,6 +46,21 @@ class ProductItemFooterDetail extends StatelessWidget {
             product.price,
             product.title,
           );
+          Scaffold.of(context).hideCurrentSnackBar(); // to prevent bugs if a user rappidly hits the add to cart icon.
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Added ${product.title} to the Cart Successfuly!',
+              ),
+              duration: Duration(seconds: 2),
+              action: SnackBarAction(
+                label: 'UNDO',
+                onPressed: () {
+                  cart.removeSingleItem(product.id);
+                },
+              ),
+            ),
+          );
         },
         color: Theme.of(context).accentColor,
       ),
