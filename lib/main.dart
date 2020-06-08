@@ -1,10 +1,14 @@
+//Native
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+//Screens
 import './screens/products_overview_screen.dart';
 import './screens/product_detail_screen.dart';
 import './screens/cart_screen.dart';
 import './screens/orders_screen.dart';
+import './screens/manage_products_screen.dart';
+import './screens/manage_single_product_screen.dart';
+//Providers
 import './providers/products.dart';
 import './providers/cart.dart';
 import './providers/orders.dart';
@@ -40,6 +44,8 @@ class Milicart extends StatelessWidget {
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           CartScreen.routeName: (ctx) => CartScreen(),
           OrdersScreen.routeName: (ctx) => OrdersScreen(),
+          ManageProductScreen.routeName: (ctx) => ManageProductScreen(),
+          ManageSingleProductScreen.routeName: (ctx) => ManageSingleProductScreen(),
         },
       ),
     );
