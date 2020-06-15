@@ -1,5 +1,7 @@
+import 'package:MiliCart/providers/products.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
 
@@ -25,6 +27,13 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
     imageUrl: '',
   );
 
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
+
   @override
   void dispose() {
     _imageUrlFocusNode.removeListener(_updateImageUrl);
@@ -44,6 +53,30 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
     super.initState();
   }
 
+  var _isInit = true;
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context).settings.arguments as String;
+      if (productId != null) {
+        _managedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+
+        _initValues = {
+          'title': _managedProduct.title,
+          'description': _managedProduct.description,
+          'price': _managedProduct.price.toString(),
+          //'imageUrl': _managedProduct.imageUrl,
+        };
+
+        _imageUrlController.text = _managedProduct.imageUrl;
+      }
+    }
+    _isInit = false;
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
       setState(() {});
@@ -51,13 +84,20 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
   }
 
   void _saveForm() {
+    // check for all the validators
+    final isValid = _form.currentState.validate();
+    if (!isValid) {
+      return;
+    }
     _form.currentState.save();
-
-    //debug
-    print(_managedProduct.title);
-    print(_managedProduct.price);
-    print(_managedProduct.description);
-    print(_managedProduct.imageUrl);
+    if (_managedProduct.id != null) {
+      //edit product
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(_managedProduct.id, _managedProduct);
+    } else {
+      //add product
+      Provider.of<Products>(context, listen: false).addProduct(_managedProduct);
+    }
   }
 
   @override
@@ -79,15 +119,23 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                initialValue: _initValues['title'],
                 decoration: InputDecoration(labelText: 'Titile'),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please provide a Titile for the product !';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _managedProduct = Product(
                     title: value,
-                    id: null,
+                    id: _managedProduct.id,
+                    isFavorite: _managedProduct.isFavorite,
                     description: _managedProduct.description,
                     price: _managedProduct.price,
                     imageUrl: _managedProduct.imageUrl,
@@ -95,6 +143,7 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['price'],
                 decoration: InputDecoration(labelText: 'Price'),
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
@@ -102,10 +151,23 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a price for the Product!';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid number for the Product!';
+                  }
+                  if (double.tryParse(value) <= 0) {
+                    return 'Please enter a number greate than zero for the product!';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _managedProduct = Product(
                     title: _managedProduct.title,
-                    id: null,
+                    id: _managedProduct.id,
+                    isFavorite: _managedProduct.isFavorite,
                     description: _managedProduct.description,
                     price: double.parse(value),
                     imageUrl: _managedProduct.imageUrl,
@@ -113,6 +175,7 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['description'],
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
@@ -120,11 +183,20 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
                 onSaved: (value) {
                   _managedProduct = Product(
                     title: _managedProduct.title,
-                    id: null,
+                    id: _managedProduct.id,
+                    isFavorite: _managedProduct.isFavorite,
                     description: value,
                     price: _managedProduct.price,
                     imageUrl: _managedProduct.imageUrl,
                   );
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a description for the Product!';
+                  }
+                  if (value.length < 10) {
+                    return 'Description should be at least 10 charactors long or more!';
+                  }
                 },
               ),
               Row(
@@ -164,7 +236,8 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
                       onSaved: (value) {
                         _managedProduct = Product(
                           title: _managedProduct.title,
-                          id: null,
+                          id: _managedProduct.id,
+                          isFavorite: _managedProduct.isFavorite,
                           description: _managedProduct.description,
                           price: _managedProduct.price,
                           imageUrl: value,
