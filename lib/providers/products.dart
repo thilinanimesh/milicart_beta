@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import './product.dart';
 
@@ -51,32 +53,52 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
-    final newProduct = Product(
-      id: DateTime.now().toString(),
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
+    const url = 'https://milicart-b50ae.firebaseio.com/products.json';
+    http
+        .post(
+      url,
+      body: json.encode(
+        {
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+          'isFavorite': product.isFavorite,
+        },
+      ),
+    )
+        .then(
+      (response) {
+
+        //debug the code
+        print(json.decode(response.body)); // this will show the id on the terminal, that was generated for the product from the server.
+
+        final newProduct = Product(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        );
+        _items.insert(0, newProduct); // athe the begining of the product
+        //_items.add(value);
+        notifyListeners();
+      },
     );
-    _items.insert(0, newProduct); // athe the begining of the product
-    //_items.add(value);
-    notifyListeners();
   }
 
-  void updateProduct(String id, Product newProduct){
+  void updateProduct(String id, Product newProduct) {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
-    if(prodIndex >= 0)
-    {
+    if (prodIndex >= 0) {
       _items[prodIndex] = newProduct;
-    }else{
+    } else {
       print('...');
     }
     notifyListeners();
   }
 
-  void deleteProduct(String id){
+  void deleteProduct(String id) {
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
-
 }
