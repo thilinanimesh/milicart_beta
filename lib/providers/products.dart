@@ -52,9 +52,9 @@ class Products with ChangeNotifier {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     const url = 'https://milicart-b50ae.firebaseio.com/products.json';
-    http
+    return http
         .post(
       url,
       body: json.encode(
@@ -69,9 +69,9 @@ class Products with ChangeNotifier {
     )
         .then(
       (response) {
-
         //debug the code
-        print(json.decode(response.body)); // this will show the id on the terminal, that was generated for the product from the server.
+        print(json.decode(response
+            .body)); // this will show the id on the terminal, that was generated for the product from the server.
 
         final newProduct = Product(
           id: json.decode(response.body)['name'],
@@ -80,7 +80,7 @@ class Products with ChangeNotifier {
           price: product.price,
           imageUrl: product.imageUrl,
         );
-        _items.insert(0, newProduct); // athe the begining of the product
+        _items.insert(0, newProduct); // insert to the begining of the product
         //_items.add(value);
         notifyListeners();
       },
