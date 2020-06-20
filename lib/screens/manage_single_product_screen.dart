@@ -109,7 +109,22 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
       //add product
       Provider.of<Products>(context, listen: false)
           .addProduct(_managedProduct)
-          .then((_) {
+          .catchError((error) {
+        return showDialog<Null>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error occured!'),
+            content:Text('Something went wrong.'),
+            actions: <Widget>[
+              FlatButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  }),
+            ],
+          ),
+        );
+      }).then((_) {
         setState(() {
           _isLoading = false;
         });

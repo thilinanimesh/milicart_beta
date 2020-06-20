@@ -84,6 +84,10 @@ class Products with ChangeNotifier {
         //_items.add(value);
         notifyListeners();
       },
+    ).catchError(
+      (error) {
+        throw error;
+      },
     );
   }
 
