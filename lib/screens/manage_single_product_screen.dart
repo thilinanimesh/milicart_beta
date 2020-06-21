@@ -85,7 +85,7 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     // check for all the validators
     final isValid = _form.currentState.validate();
     if (!isValid) {
@@ -106,15 +106,15 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
       // This will go back to the previous page.
       Navigator.of(context).pop();
     } else {
-      //add product
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_managedProduct)
-          .catchError((error) {
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_managedProduct);
+      } catch (error) {
         return showDialog<Null>(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('An error occured!'),
-            content:Text('Something went wrong.'),
+            content: Text('Something went wrong.'),
             actions: <Widget>[
               FlatButton(
                   child: Text('OK'),
@@ -124,13 +124,13 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
             ],
           ),
         );
-      }).then((_) {
+      } finally {
         setState(() {
           _isLoading = false;
         });
         // This will go back to the previous page.
         Navigator.of(context).pop();
-      });
+      }
     }
   }
 

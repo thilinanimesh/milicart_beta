@@ -52,43 +52,41 @@ class Products with ChangeNotifier {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
-  Future<void> addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     const url = 'https://milicart-b50ae.firebaseio.com/products.json';
-    return http
-        .post(
-      url,
-      body: json.encode(
-        {
-          'title': product.title,
-          'description': product.description,
-          'imageUrl': product.imageUrl,
-          'price': product.price,
-          'isFavorite': product.isFavorite,
-        },
-      ),
-    )
-        .then(
-      (response) {
-        //debug the code
-        print(json.decode(response
-            .body)); // this will show the id on the terminal, that was generated for the product from the server.
 
-        final newProduct = Product(
-          id: json.decode(response.body)['name'],
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-        );
-        _items.insert(0, newProduct); // insert to the begining of the product
-        //_items.add(value);
-        notifyListeners();
-      },
-    ).catchError(
-      (error) {
-        throw error;
-      },
-    );
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode(
+          {
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price,
+            'isFavorite': product.isFavorite,
+          },
+        ),
+      );
+      //debug the code
+      print(json.decode(response
+          .body)); // this will show the id on the terminal, that was generated for the product from the server.
+
+      final newProduct = Product(
+        id: json.decode(response.body)['name'],
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      );
+      _items.insert(0, newProduct); // insert to the begining of the product
+      //_items.add(value);
+      notifyListeners();
+    } catch (error) {
+
+      // this will throw to the interface where, user will be notified with a meaningful way
+      throw (error);
+    }
   }
 
   void updateProduct(String id, Product newProduct) {
