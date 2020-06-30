@@ -98,19 +98,14 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
 
     if (_managedProduct.id != null) {
       //edit product
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_managedProduct.id, _managedProduct);
-      setState(() {
-        _isLoading = false;
-      });
-      // This will go back to the previous page.
-      Navigator.of(context).pop();
     } else {
       try {
         await Provider.of<Products>(context, listen: false)
             .addProduct(_managedProduct);
       } catch (error) {
-        return showDialog<Null>(
+        await showDialog<Null>(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('An error occured!'),
@@ -124,14 +119,20 @@ class _ManageSingleProductScreenState extends State<ManageSingleProductScreen> {
             ],
           ),
         );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-        // This will go back to the previous page.
-        Navigator.of(context).pop();
       }
+      // finally {
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      //   // This will go back to the previous page.
+      //   Navigator.of(context).pop();
+      // }
     }
+    setState(() {
+      _isLoading = false;
+    });
+    // This will go back to the previous page.
+    Navigator.of(context).pop();
   }
 
   @override
