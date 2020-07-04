@@ -106,8 +106,20 @@ class Products with ChangeNotifier {
 
   void deleteProduct(String id) {
     final url = 'https://milicart-b50ae.firebaseio.com/products/$id.json';
-    http.delete(url);
-    _items.removeWhere((prod) => prod.id == id);
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var existingProduct = _items[existingProductIndex];
+    //Optimistic updating method
+
+    //first remove the product form the list
+    _items.removeAt(existingProductIndex);
+
+    // Then try to delete the product on the cloud
+    http.delete(url).then((_) {
+      existingProduct = null;
+    }).catchError((_) {
+      //if fails re add the product to the local list
+      _items.insert(existingProductIndex, existingProduct);
+    });
     notifyListeners();
   }
 }
