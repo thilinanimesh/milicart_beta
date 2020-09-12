@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 
 import './product.dart';
 
+import '../models/http_exception.dart';
+
 class Products with ChangeNotifier {
   List<Product> _items = [];
 
@@ -104,7 +106,7 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
+  Future<void> deleteProduct(String id) async {
     final url = 'https://milicart-b50ae.firebaseio.com/products/$id.json';
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
@@ -112,14 +114,15 @@ class Products with ChangeNotifier {
 
     //first remove the product form the list
     _items.removeAt(existingProductIndex);
-
+    notifyListeners();
     // Then try to delete the product on the cloud
-    http.delete(url).then((_) {
-      existingProduct = null;
-    }).catchError((_) {
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
       //if fails re add the product to the local list
       _items.insert(existingProductIndex, existingProduct);
-    });
-    notifyListeners();
+      notifyListeners();
+      throw HttpException('Faild to delete the product.');
+    }
+    existingProduct = null;
   }
 }
