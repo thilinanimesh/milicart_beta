@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
   final String id;
@@ -17,8 +20,30 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavoriteStatus() {
-    isFavorite = !isFavorite;
+  void _setFavValue(bool newValue) {
+    isFavorite = newValue;
     notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus() async {
+    final oldStatus = isFavorite;
+    _setFavValue(!isFavorite);
+    try {
+      final url = 'https://milicart-b50ae.firebaseio.com/products/$id.json';
+      final response = await http.patch(
+        url,
+        body: json.encode(
+          {
+            'isFavorite': isFavorite,
+          },
+        ),
+      );
+
+      if (response.statusCode >= 400) {
+        _setFavValue(oldStatus);
+      }
+    } catch (error) {
+      _setFavValue(oldStatus);
+    }
   }
 }
